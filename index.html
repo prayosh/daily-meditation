@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditation Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --theme-color: #8e44ad;
+            --theme-color-dark: #7d3c98;
+            --bg-color: #1a1a2e;
+            --card-bg-color: #2c2c54;
+            --text-color: #f0f0f0;
+            --text-color-secondary: #bdc3c7;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling when overlays are open */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 900px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+            padding-bottom: 80px; /* Space for FAB */
+        }
+
+        /* Scrollbar styling */
+        #app-container::-webkit-scrollbar,
+        #history-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #app-container::-webkit-scrollbar-track,
+        #history-content::-webkit-scrollbar-track {
+            background: var(--card-bg-color);
+        }
+
+        #app-container::-webkit-scrollbar-thumb,
+        #history-content::-webkit-scrollbar-thumb {
+            background-color: var(--theme-color);
+            border-radius: 10px;
+            border: 2px solid var(--card-bg-color);
+        }
+
+        header {
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--theme-color);
+            transition: color 0.3s ease;
+        }
+
+        header p {
+            color: var(--text-color-secondary);
+            font-size: 1.1rem;
+        }
+        
+        #date-picker {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--theme-color);
+            color: var(--text-color);
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        #date-picker::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .card label {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .card input[type="number"] {
+            background: var(--bg-color);
+            border: 1px solid var(--theme-color-dark);
+            color: var(--text-color);
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            font-size: 2rem;
+            text-align: center;
+            width: 100%;
+            -moz-appearance: textfield;
+        }
+        .card input::-webkit-outer-spin-button,
+        .card input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--theme-color);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background: var(--theme-color-dark);
+            transform: translateY(-2px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid var(--theme-color);
+            color: var(--theme-color);
+        }
+        .btn-secondary:hover {
+            background-color: var(--theme-color);
+            color: white;
+        }
+
+        .btn-danger {
+             background-color: var(--danger-color);
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .total-display {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        #total-minutes {
+            color: var(--theme-color);
+            transition: color 0.3s ease;
+        }
+
+        #menu-toggle-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--theme-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        #menu-toggle-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            background: var(--card-bg-color);
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+        }
+
+        #side-menu.open {
+            transform: translateX(0);
+        }
+        #side-menu h2 {
+            margin-bottom: 1rem;
+            color: var(--theme-color);
+            transition: color 0.3s ease;
+        }
+
+        .menu-section {
+            border-top: 1px solid var(--theme-color-dark);
+            padding-top: 1rem;
+        }
+        .menu-section .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .menu-section label {
+             display: block;
+             margin-bottom: 0.5rem;
+        }
+        
+        .theme-inputs {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        #theme-color-picker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border: 2px solid var(--theme-color-dark);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 2px;
+        }
+        #theme-color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        #theme-color-picker::-webkit-color-swatch {
+            border-radius: 4px;
+            border: none;
+        }
+        #theme-color-picker::-moz-color-swatch {
+            border-radius: 4px;
+            border: none;
+        }
+
+        .theme-inputs input[type="text"] {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--theme-color-dark);
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .theme-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .full-overlay {
+            z-index: 1002;
+            background: var(--bg-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.95);
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+        }
+
+        .full-overlay.active {
+            opacity: 1;
+            transform: scale(1);
+            visibility: visible;
+        }
+        
+        .full-overlay-header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .full-overlay-header h2 {
+            font-size: 2rem;
+            color: var(--theme-color);
+        }
+
+        #history-content {
+            width: 100%;
+            max-width: 1200px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        #history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        #history-table th, #history-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--theme-color-dark);
+        }
+        #history-table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            font-weight: 600;
+        }
+        #history-table tbody tr:hover {
+            background-color: var(--card-bg-color);
+        }
+        #history-table .total-col {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: #f1c40f;
+            font-weight: 700;
+        }
+
+        .modal-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
+            color: var(--theme-color);
+        }
+
+        #stopwatch-display {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .stopwatch-controls, .stopwatch-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: bottom 0.5s ease;
+            z-index: 2000;
+            font-weight: 600;
+        }
+        #toast.show {
+            bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 0.5rem; }
+            #app-container { gap: 1rem; padding-bottom: 70px; }
+            header h1 { font-size: 2rem; }
+            header p { font-size: 1rem; }
+            main { grid-template-columns: 1fr; gap: 1rem; }
+            .card { padding: 1.5rem; }
+            #menu-toggle-btn { bottom: 1rem; right: 1rem; width: 50px; height: 50px; }
+            .full-overlay { padding: 1rem; }
+            .full-overlay-header h2 { font-size: 1.5rem; }
+            #history-table th, #history-table td { padding: 0.5rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <h1>Daily Meditation</h1>
+            <p id="current-date-display">22/10/2025 — Wednesday</p>
+            <input type="date" id="date-picker">
+        </header>
+
+        <main>
+            <section class="card">
+                <label for="morning-duration">Morning Duration (minutes)</label>
+                <input type="number" id="morning-duration" min="0" value="0" placeholder="0">
+                <button class="btn" id="save-morning">Save Morning</button>
+            </section>
+            <section class="card">
+                <label for="evening-duration">Evening Duration (minutes)</label>
+                <input type="number" id="evening-duration" min="0" value="0" placeholder="0">
+                <button class="btn" id="save-evening">Save Evening</button>
+            </section>
+            <div class="total-display">
+                Total for this day: <span id="total-minutes">0</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Menu Button -->
+    <button id="menu-toggle-btn" aria-label="Open Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    
+    <!-- Side Menu -->
+    <div id="menu-overlay" class="overlay"></div>
+    <nav id="side-menu">
+        <h2>Menu</h2>
+        <div class="menu-section">
+            <button class="btn" id="menu-history">History</button>
+        </div>
+        <div class="menu-section">
+            <label for="theme-color-input">Customize Theme</label>
+            <div class="theme-inputs">
+                <input type="color" id="theme-color-picker" value="#8e44ad">
+                <input type="text" id="theme-color-input" placeholder="#8e44ad">
+            </div>
+            <div class="theme-buttons">
+                <button class="btn" id="apply-theme">Apply</button>
+                <button class="btn btn-secondary" id="reset-theme">Reset</button>
+            </div>
+        </div>
+        <div class="menu-section">
+            <label>Export / Import</label>
+            <button class="btn" id="export-json">Export JSON</button>
+            <button class="btn" id="import-json-btn">Import JSON</button>
+            <input type="file" id="import-json-input" accept=".json" hidden>
+            <button class="btn" id="export-csv">Export Excel (CSV)</button>
+        </div>
+        <div class="menu-section">
+            <button class="btn" id="menu-stopwatch">Stopwatch</button>
+        </div>
+    </nav>
+
+    <!-- History Overlay -->
+    <div id="history-overlay" class="overlay full-overlay">
+        <div class="full-overlay-header">
+            <h2>History</h2>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" id="download-csv-history">Download CSV</button>
+                <button class="btn btn-secondary" id="close-history">Home</button>
+            </div>
+        </div>
+        <div id="history-content">
+            <table id="history-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Morning (min)</th>
+                        <th>Evening (min)</th>
+                        <th class="total-col">Total (min)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Stopwatch Modal -->
+    <div id="stopwatch-modal-overlay" class="overlay modal-overlay">
+        <div class="modal-content">
+            <h2>Stopwatch</h2>
+            <div id="stopwatch-display">00:00:00</div>
+            <div class="stopwatch-controls">
+                <button class="btn" id="stopwatch-start">Start</button>
+                <button class="btn btn-secondary" id="stopwatch-pause">Pause</button>
+                <button class="btn btn-danger" id="stopwatch-reset">Reset</button>
+            </div>
+            <div class="stopwatch-actions">
+                <button class="btn" id="stopwatch-add-morning">Add to Morning</button>
+                <button class="btn" id="stopwatch-add-evening">Add to Evening</button>
+            </div>
+            <button class="btn btn-secondary" id="stopwatch-close" style="margin-top: 1rem; width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            'use strict';
+
+            // --- DOM ELEMENTS ---
+            const datePicker = document.getElementById('date-picker');
+            const currentDateDisplay = document.getElementById('current-date-display');
+            const morningInput = document.getElementById('morning-duration');
+            const eveningInput = document.getElementById('evening-duration');
+            const totalMinutesDisplay = document.getElementById('total-minutes');
+            const saveMorningBtn = document.getElementById('save-morning');
+            const saveEveningBtn = document.getElementById('save-evening');
+            const menuToggleBtn = document.getElementById('menu-toggle-btn');
+            const menuOverlay = document.getElementById('menu-overlay');
+            const sideMenu = document.getElementById('side-menu');
+            const historyBtn = document.getElementById('menu-history');
+            const historyOverlay = document.getElementById('history-overlay');
+            const closeHistoryBtn = document.getElementById('close-history');
+            const historyTableBody = document.querySelector('#history-table tbody');
+            const themeColorInput = document.getElementById('theme-color-input');
+            const themeColorPicker = document.getElementById('theme-color-picker');
+            const applyThemeBtn = document.getElementById('apply-theme');
+            const resetThemeBtn = document.getElementById('reset-theme');
+            const exportJsonBtn = document.getElementById('export-json');
+            const importJsonBtn = document.getElementById('import-json-btn');
+            const importJsonInput = document.getElementById('import-json-input');
+            const exportCsvBtn = document.getElementById('export-csv');
+            const downloadCsvHistoryBtn = document.getElementById('download-csv-history');
+            const stopwatchBtn = document.getElementById('menu-stopwatch');
+            const stopwatchModalOverlay = document.getElementById('stopwatch-modal-overlay');
+            const stopwatchCloseBtn = document.getElementById('stopwatch-close');
+            const stopwatchDisplay = document.getElementById('stopwatch-display');
+            const stopwatchStartBtn = document.getElementById('stopwatch-start');
+            const stopwatchPauseBtn = document.getElementById('stopwatch-pause');
+            const stopwatchResetBtn = document.getElementById('stopwatch-reset');
+            const stopwatchAddMorningBtn = document.getElementById('stopwatch-add-morning');
+            const stopwatchAddEveningBtn = document.getElementById('stopwatch-add-evening');
+            const toast = document.getElementById('toast');
+
+
+            // --- STATE & CONSTANTS ---
+            const STORAGE_KEY = 'meditation_tracking_v1';
+            const DEFAULT_THEME = '#8e44ad';
+            let data = [];
+            let stopwatchInterval = null;
+            let stopwatchState = { elapsed: 0, startTime: 0, isRunning: false };
+
+            // --- DATA FUNCTIONS ---
+            const loadDataFromStorage = () => {
+                const storedData = localStorage.getItem(STORAGE_KEY);
+                data = storedData ? JSON.parse(storedData) : [];
+            };
+
+            const saveDataToStorage = () => {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            };
+
+            const getRecordForDate = (isoDate) => {
+                return data.find(record => record.date === isoDate);
+            };
+
+            const addOrUpdateRecord = (isoDate, session, minutes) => {
+                let record = getRecordForDate(isoDate);
+                if (record) {
+                    record[session] = minutes;
+                } else {
+                    const newRecord = { date: isoDate, morning: 0, evening: 0 };
+                    newRecord[session] = minutes;
+                    data.push(newRecord);
+                }
+                saveDataToStorage();
+                updateUIForDate(isoDate);
+            };
+
+            const backfillMissingDays = () => {
+                if (data.length === 0) return;
+
+                const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const lastRecordDate = new Date(sortedData[0].date + 'T00:00:00');
+                
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                yesterday.setHours(0, 0, 0, 0);
+
+                if (lastRecordDate >= yesterday) return;
+
+                let currentDate = new Date(lastRecordDate);
+                currentDate.setDate(currentDate.getDate() + 1);
+
+                let added = false;
+                while (currentDate <= yesterday) {
+                    const isoDate = currentDate.toISOString().split('T')[0];
+                    if (!getRecordForDate(isoDate)) {
+                        data.push({ date: isoDate, morning: 0, evening: 0 });
+                        added = true;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                if (added) {
+                    saveDataToStorage();
+                }
+            };
+
+            // --- UI UPDATE FUNCTIONS ---
+            const updateUIForDate = (isoDate) => {
+                const record = getRecordForDate(isoDate);
+                const morning = record ? record.morning : 0;
+                const evening = record ? record.evening : 0;
+                
+                morningInput.value = morning;
+                eveningInput.value = evening;
+                totalMinutesDisplay.textContent = morning + evening;
+
+                const displayDate = new Date(isoDate + 'T00:00:00');
+                const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
+                const formattedDate = displayDate.toLocaleDateString('en-GB', options).replace(/,/g, ' —');
+                currentDateDisplay.textContent = formattedDate;
+            };
+
+            const renderHistoryTable = () => {
+                historyTableBody.innerHTML = '';
+                const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                sortedData.forEach((record, index) => {
+                    const tr = document.createElement('tr');
+                    const displayDate = new Date(record.date + 'T00:00:00');
+                    const day = displayDate.toLocaleDateString('en-US', { weekday: 'short' });
+                    const date = displayDate.toLocaleDateString('en-GB');
+                    const total = record.morning + record.evening;
+
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${date}</td>
+                        <td>${day}</td>
+                        <td>${record.morning}</td>
+                        <td>${record.evening}</td>
+                        <td class="total-col">${total}</td>
+                    `;
+                    historyTableBody.appendChild(tr);
+                });
+            };
+            
+            const showToast = (message) => {
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            };
+
+            // --- DATE & TIME UTILS ---
+            const getTodayISO = () => new Date().toISOString().split('T')[0];
+
+            // --- EVENT HANDLERS ---
+            const handleDateChange = (e) => {
+                updateUIForDate(e.target.value);
+            };
+
+            const handleSave = (session) => {
+                const input = session === 'morning' ? morningInput : eveningInput;
+                const minutes = parseInt(input.value, 10);
+                if (isNaN(minutes) || minutes < 0) {
+                    showToast('Invalid input. Please enter a positive number.');
+                    input.value = getRecordForDate(datePicker.value)?.[session] || 0;
+                    return;
+                }
+                addOrUpdateRecord(datePicker.value, session, minutes);
+                showToast(`${session.charAt(0).toUpperCase() + session.slice(1)} session saved!`);
+            };
+            
+            const toggleMenu = () => {
+                sideMenu.classList.toggle('open');
+                menuOverlay.classList.toggle('active');
+            };
+
+            const openHistory = () => {
+                renderHistoryTable();
+                historyOverlay.classList.add('active');
+                toggleMenu();
+            };
+            const closeHistory = () => historyOverlay.classList.remove('active');
+
+            // --- THEME ---
+            const applyTheme = (color) => {
+                const hexColorRegex = /^#([0-9a-f]{3}){1,2}$/i;
+                if (!hexColorRegex.test(color)) {
+                    showToast('Invalid HEX color format.');
+                    return false;
+                }
+                document.documentElement.style.setProperty('--theme-color', color);
+                
+                // Simple darkening for hover state.
+                let r = 0, g = 0, b = 0;
+                if (color.length === 4) {
+                    r = parseInt(color[1] + color[1], 16);
+                    g = parseInt(color[2] + color[2], 16);
+                    b = parseInt(color[3] + color[3], 16);
+                } else if (color.length === 7) {
+                    r = parseInt(color.slice(1, 3), 16);
+                    g = parseInt(color.slice(3, 5), 16);
+                    b = parseInt(color.slice(5, 7), 16);
+                }
+                const darkerColor = `rgb(${Math.max(0, r-20)}, ${Math.max(0, g-20)}, ${Math.max(0, b-20)})`;
+                document.documentElement.style.setProperty('--theme-color-dark', darkerColor);
+                return true;
+            };
+
+            const handleThemeApply = () => {
+                if (applyTheme(themeColorInput.value)) {
+                    localStorage.setItem('themeColor', themeColorInput.value);
+                    showToast('Theme applied!');
+                }
+            };
+            
+            const handleThemeReset = () => {
+                applyTheme(DEFAULT_THEME);
+                localStorage.removeItem('themeColor');
+                themeColorInput.value = DEFAULT_THEME;
+                themeColorPicker.value = DEFAULT_THEME;
+                showToast('Theme reset to default.');
+            };
+
+            // --- EXPORT / IMPORT ---
+            const generateCSV = () => {
+                let csvContent = "S.No,Date(dd/mm/yyyy),Day,Morning (min),Evening (min),Total (min)\n";
+                const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                sortedData.forEach((record, index) => {
+                    const displayDate = new Date(record.date + 'T00:00:00');
+                    const day = displayDate.toLocaleDateString('en-US', { weekday: 'short' });
+                    const date = displayDate.toLocaleDateString('en-GB');
+                    const total = record.morning + record.evening;
+                    csvContent += `${index + 1},${date},${day},${record.morning},${record.evening},${total}\n`;
+                });
+                return csvContent;
+            };
+
+            const downloadFile = (content, fileName, contentType) => {
+                const a = document.createElement("a");
+                const file = new Blob([content], { type: contentType });
+                a.href = URL.createObjectURL(file);
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(a.href);
+            };
+
+            const handleExportJson = () => {
+                downloadFile(JSON.stringify(data, null, 2), 'meditation_data.json', 'application/json');
+                showToast('JSON data exported.');
+            };
+            
+            const handleExportCsv = () => {
+                const csv = generateCSV();
+                downloadFile(csv, 'meditation_history.csv', 'text/csv;charset=utf-8;');
+                showToast('CSV data exported.');
+            };
+
+            const handleImportJson = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        if (Array.isArray(importedData) && importedData.every(item => 'date' in item && 'morning' in item && 'evening' in item)) {
+                            if (confirm('Importing will replace all current data. Continue?')) {
+                                data = importedData;
+                                saveDataToStorage();
+                                updateUIForDate(datePicker.value);
+                                showToast('Data imported successfully!');
+                            }
+                        } else {
+                            throw new Error('Invalid data format.');
+                        }
+                    } catch (error) {
+                        alert(`Import failed: ${error.message}`);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = ''; // Reset input
+            };
+
+            // --- STOPWATCH ---
+            const formatTime = (ms) => {
+                const totalSeconds = Math.floor(ms / 1000);
+                const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+                const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+                const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            };
+            
+            const updateStopwatchDisplay = () => {
+                const now = Date.now();
+                const elapsed = stopwatchState.elapsed + (stopwatchState.isRunning ? now - stopwatchState.startTime : 0);
+                stopwatchDisplay.textContent = formatTime(elapsed);
+            };
+
+            const startStopwatch = () => {
+                if (!stopwatchState.isRunning) {
+                    stopwatchState.isRunning = true;
+                    stopwatchState.startTime = Date.now();
+                    stopwatchInterval = setInterval(updateStopwatchDisplay, 1000);
+                }
+            };
+            
+            const pauseStopwatch = () => {
+                if (stopwatchState.isRunning) {
+                    stopwatchState.isRunning = false;
+                    stopwatchState.elapsed += Date.now() - stopwatchState.startTime;
+                    clearInterval(stopwatchInterval);
+                }
+            };
+            
+            const resetStopwatch = () => {
+                pauseStopwatch();
+                stopwatchState.elapsed = 0;
+                updateStopwatchDisplay();
+            };
+
+            const addStopwatchToSession = (session) => {
+                pauseStopwatch();
+                const totalMs = stopwatchState.elapsed;
+                const totalMinutes = Math.round(totalMs / 1000 / 60);
+
+                if (totalMinutes > 0) {
+                    const input = session === 'morning' ? morningInput : eveningInput;
+                    const currentMinutes = parseInt(getRecordForDate(datePicker.value)?.[session] || 0, 10);
+                    input.value = currentMinutes + totalMinutes;
+                    handleSave(session);
+                    resetStopwatch();
+                    closeStopwatch();
+                } else {
+                    showToast('Stopwatch time is less than a minute.');
+                }
+            };
+            
+            const openStopwatch = () => {
+                stopwatchModalOverlay.classList.add('active');
+                toggleMenu();
+            };
+            const closeStopwatch = () => stopwatchModalOverlay.classList.remove('active');
+
+            // --- INITIALIZATION ---
+            const init = () => {
+                // Setup Event Listeners
+                datePicker.addEventListener('change', handleDateChange);
+                saveMorningBtn.addEventListener('click', () => handleSave('morning'));
+                eveningInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleSave('evening'); });
+                morningInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleSave('morning'); });
+                saveEveningBtn.addEventListener('click', () => handleSave('evening'));
+                menuToggleBtn.addEventListener('click', toggleMenu);
+                menuOverlay.addEventListener('click', toggleMenu);
+                historyBtn.addEventListener('click', openHistory);
+                closeHistoryBtn.addEventListener('click', closeHistory);
+                
+                themeColorPicker.addEventListener('input', (e) => { themeColorInput.value = e.target.value; });
+                themeColorInput.addEventListener('change', (e) => { themeColorPicker.value = e.target.value; });
+                applyThemeBtn.addEventListener('click', handleThemeApply);
+                resetThemeBtn.addEventListener('click', handleThemeReset);
+                
+                exportJsonBtn.addEventListener('click', handleExportJson);
+                exportCsvBtn.addEventListener('click', handleExportCsv);
+                downloadCsvHistoryBtn.addEventListener('click', handleExportCsv);
+                importJsonBtn.addEventListener('click', () => importJsonInput.click());
+                importJsonInput.addEventListener('change', handleImportJson);
+                
+                stopwatchBtn.addEventListener('click', openStopwatch);
+                stopwatchCloseBtn.addEventListener('click', closeStopwatch);
+                stopwatchStartBtn.addEventListener('click', startStopwatch);
+                stopwatchPauseBtn.addEventListener('click', pauseStopwatch);
+                stopwatchResetBtn.addEventListener('click', resetStopwatch);
+                stopwatchAddMorningBtn.addEventListener('click', () => addStopwatchToSession('morning'));
+                stopwatchAddEveningBtn.addEventListener('click', () => addStopwatchToSession('evening'));
+
+                // Load initial state
+                loadDataFromStorage();
+                backfillMissingDays();
+                const savedTheme = localStorage.getItem('themeColor') || DEFAULT_THEME;
+                applyTheme(savedTheme);
+                themeColorInput.value = savedTheme;
+                themeColorPicker.value = savedTheme;
+                datePicker.value = getTodayISO();
+                updateUIForDate(datePicker.value);
+            };
+
+            init();
+        });
+    </script>
+</body>
+</html>
