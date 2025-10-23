@@ -133,28 +133,19 @@
         }
 
         .quick-select-buttons {
-            display: flex;
-            flex-wrap: nowrap; /* Force single line */
-            overflow-x: auto;  /* Allow scrolling on small screens */
-            -webkit-overflow-scrolling: touch; /* Momentum scroll on iOS */
-            scrollbar-width: none; /* Hide scrollbar on Firefox */
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
             gap: 0.5rem;
-            justify-content: center;
             margin-bottom: 1rem;
-            padding-bottom: 5px; /* Prevent scrollbar from overlapping buttons */
-        }
-        .quick-select-buttons::-webkit-scrollbar {
-            display: none; /* Hide scrollbar on Chrome/Safari */
         }
         
         .btn-quick-select {
-            padding: 0.4rem 0.8rem;
+            padding: 0.4rem 0.2rem;
             font-size: 0.8rem;
-            min-width: 40px;
+            text-align: center;
             background-color: transparent;
             border: 1px solid var(--theme-color);
             color: var(--theme-color);
-            flex-shrink: 0; /* Prevent buttons from shrinking */
         }
         
         .btn-quick-select:hover {
@@ -368,6 +359,39 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.5rem;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--bg-color);
+            border: 1px solid var(--theme-color-dark);
+            border-radius: 5px;
+            outline: none;
+            padding: 0;
+            margin-top: 0.5rem;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--theme-color);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid var(--card-bg-color);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--theme-color);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid var(--card-bg-color);
         }
 
         .full-overlay {
@@ -601,6 +625,10 @@
                     <input type="text" id="text-color-input">
                 </div>
             </div>
+             <div class="theme-control-group">
+                <label for="global-size-slider">Interface Size</label>
+                <input type="range" id="global-size-slider" min="0.8" max="1.3" step="0.05" value="1">
+            </div>
             <div class="theme-buttons">
                 <button class="btn" id="apply-theme">Apply</button>
                 <button class="btn btn-secondary" id="reset-theme">Reset</button>
@@ -760,7 +788,8 @@
             const textColorPicker = document.getElementById('text-color-picker');
             const applyThemeBtn = document.getElementById('apply-theme');
             const resetThemeBtn = document.getElementById('reset-theme');
-            
+            const globalSizeSlider = document.getElementById('global-size-slider');
+
             // Delete Data Elements
             const deleteDataBtn = document.getElementById('delete-data-btn');
             const deleteModalOverlay = document.getElementById('delete-modal-overlay');
@@ -770,6 +799,7 @@
             // --- STATE & CONSTANTS ---
             const STORAGE_KEY = 'meditation_tracking_v1';
             const THEME_SETTINGS_KEY = 'meditation_theme_settings_v1';
+            const FONT_SIZE_KEY = 'meditation_font_size_v1';
             const DEFAULT_THEME_SETTINGS = {
                 '--theme-color': '#8e44ad',
                 '--bg-color': '#1a1a2e',
@@ -896,10 +926,32 @@
 
             // --- DATE & TIME UTILS ---
             const getTodayISO = () => new Date().toISOString().split('T')[0];
+            
+            // --- SIZE CONTROL ---
+            const applyGlobalSize = (scale) => {
+                document.documentElement.style.fontSize = `${scale * 100}%`;
+            };
+
+            const saveGlobalSize = (scale) => {
+                localStorage.setItem(FONT_SIZE_KEY, scale);
+            };
+
+            const loadGlobalSize = () => {
+                const savedSize = localStorage.getItem(FONT_SIZE_KEY);
+                const scale = savedSize ? parseFloat(savedSize) : 1;
+                applyGlobalSize(scale);
+                globalSizeSlider.value = scale;
+            };
 
             // --- EVENT HANDLERS ---
             const handleDateChange = (e) => {
                 updateUIForDate(e.target.value);
+            };
+            
+            const handleSizeChange = (e) => {
+                const scale = e.target.value;
+                applyGlobalSize(scale);
+                saveGlobalSize(scale);
             };
 
             const handleSave = (session) => {
@@ -1008,6 +1060,12 @@
                 applyTheme(DEFAULT_THEME_SETTINGS);
                 updateThemeInputs(DEFAULT_THEME_SETTINGS);
                 localStorage.removeItem(THEME_SETTINGS_KEY);
+                
+                // Also reset size
+                applyGlobalSize(1);
+                globalSizeSlider.value = 1;
+                localStorage.removeItem(FONT_SIZE_KEY);
+
                 showToast('Theme reset to default.');
             };
 
@@ -1209,6 +1267,7 @@
                 });
                 applyThemeBtn.addEventListener('click', handleThemeApply);
                 resetThemeBtn.addEventListener('click', handleThemeReset);
+                globalSizeSlider.addEventListener('input', handleSizeChange);
                 
                 // Export/Import Listeners
                 exportJsonBtn.addEventListener('click', handleExportJson);
@@ -1246,6 +1305,7 @@
                 loadDataFromStorage();
                 backfillMissingDays();
                 loadTheme();
+                loadGlobalSize();
                 datePicker.value = getTodayISO();
                 updateUIForDate(datePicker.value);
                 checkWeeklyReminder();
