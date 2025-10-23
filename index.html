@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +41,7 @@
             justify-content: center;
             align-items: flex-start;
             padding: 1rem;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         #app-container {
@@ -88,6 +89,11 @@
             font-size: 1.1rem;
         }
         
+        #current-date-display {
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
         #date-picker {
             margin-top: 1rem;
             padding: 0.5rem 1rem;
@@ -118,11 +124,42 @@
             flex-direction: column;
             gap: 1rem;
             text-align: center;
+            transition: background-color 0.3s ease;
         }
 
         .card label {
             font-size: 1.2rem;
             font-weight: 600;
+        }
+
+        .quick-select-buttons {
+            display: flex;
+            flex-wrap: nowrap; /* Force single line */
+            overflow-x: auto;  /* Allow scrolling on small screens */
+            -webkit-overflow-scrolling: touch; /* Momentum scroll on iOS */
+            scrollbar-width: none; /* Hide scrollbar on Firefox */
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+            padding-bottom: 5px; /* Prevent scrollbar from overlapping buttons */
+        }
+        .quick-select-buttons::-webkit-scrollbar {
+            display: none; /* Hide scrollbar on Chrome/Safari */
+        }
+        
+        .btn-quick-select {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            min-width: 40px;
+            background-color: transparent;
+            border: 1px solid var(--theme-color);
+            color: var(--theme-color);
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+        
+        .btn-quick-select:hover {
+            background-color: var(--theme-color) !important;
+            color: white !important;
         }
 
         .card input[type="number"] {
@@ -135,6 +172,7 @@
             text-align: center;
             width: 100%;
             -moz-appearance: textfield;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .card input::-webkit-outer-spin-button,
         .card input::-webkit-inner-spin-button {
@@ -193,6 +231,13 @@
             transition: color 0.3s ease;
         }
 
+        #emoji-indicator {
+            grid-column: 1 / -1;
+            font-size: 4rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
         #menu-toggle-btn {
             position: fixed;
             bottom: 2rem;
@@ -243,7 +288,7 @@
             background: var(--card-bg-color);
             z-index: 1000;
             transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background-color 0.3s ease;
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -273,14 +318,20 @@
              margin-bottom: 0.5rem;
         }
         
+        .theme-control-group {
+            margin-bottom: 1rem;
+        }
+        .theme-control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
         .theme-inputs {
             display: flex;
             gap: 0.5rem;
             align-items: center;
-            margin-bottom: 0.5rem;
         }
         
-        #theme-color-picker {
+        .theme-inputs input[type="color"] {
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -292,14 +343,14 @@
             cursor: pointer;
             padding: 2px;
         }
-        #theme-color-picker::-webkit-color-swatch-wrapper {
+        .theme-inputs input[type="color"]::-webkit-color-swatch-wrapper {
             padding: 0;
         }
-        #theme-color-picker::-webkit-color-swatch {
+        .theme-inputs input[type="color"]::-webkit-color-swatch {
             border-radius: 4px;
             border: none;
         }
-        #theme-color-picker::-moz-color-swatch {
+        .theme-inputs input[type="color"]::-moz-color-swatch {
             border-radius: 4px;
             border: none;
         }
@@ -329,7 +380,7 @@
             opacity: 0;
             transform: scale(0.95);
             visibility: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease, background-color 0.3s ease;
         }
 
         .full-overlay.active {
@@ -372,6 +423,7 @@
             top: 0;
             background-color: var(--bg-color);
             font-weight: 600;
+            transition: background-color 0.3s ease;
         }
         #history-table tbody tr:hover {
             background-color: var(--card-bg-color);
@@ -397,7 +449,7 @@
             max-width: 400px;
             text-align: center;
             transform: scale(0.9);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background-color 0.3s ease;
         }
         .overlay.active .modal-content {
             transform: scale(1);
@@ -405,6 +457,7 @@
         .modal-content h2 {
             margin-bottom: 1.5rem;
             color: var(--theme-color);
+            transition: color 0.3s ease;
         }
 
         #stopwatch-display {
@@ -465,23 +518,40 @@
         <main>
             <section class="card">
                 <label for="morning-duration">Morning Duration (minutes)</label>
-                <input type="number" id="morning-duration" min="0" value="0" placeholder="0">
+                <div class="quick-select-buttons">
+                    <button class="btn btn-quick-select" data-value="5">5</button>
+                    <button class="btn btn-quick-select" data-value="10">10</button>
+                    <button class="btn btn-quick-select" data-value="15">15</button>
+                    <button class="btn btn-quick-select" data-value="20">20</button>
+                    <button class="btn btn-quick-select" data-value="25">25</button>
+                    <button class="btn btn-quick-select" data-value="30">30</button>
+                </div>
+                <input type="number" id="morning-duration" min="0" placeholder="0">
                 <button class="btn" id="save-morning">Save Morning</button>
             </section>
             <section class="card">
                 <label for="evening-duration">Evening Duration (minutes)</label>
-                <input type="number" id="evening-duration" min="0" value="0" placeholder="0">
+                 <div class="quick-select-buttons">
+                    <button class="btn btn-quick-select" data-value="5">5</button>
+                    <button class="btn btn-quick-select" data-value="10">10</button>
+                    <button class="btn btn-quick-select" data-value="15">15</button>
+                    <button class="btn btn-quick-select" data-value="20">20</button>
+                    <button class="btn btn-quick-select" data-value="25">25</button>
+                    <button class="btn btn-quick-select" data-value="30">30</button>
+                </div>
+                <input type="number" id="evening-duration" min="0" placeholder="0">
                 <button class="btn" id="save-evening">Save Evening</button>
             </section>
             <div class="total-display">
                 Total for this day: <span id="total-minutes">0</span>
             </div>
+            <div id="emoji-indicator">☹️</div>
         </main>
     </div>
 
     <!-- Floating Menu Button -->
     <button id="menu-toggle-btn" aria-label="Open Menu">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
     
     <!-- Side Menu -->
@@ -492,17 +562,6 @@
             <button class="btn" id="menu-history">History</button>
         </div>
         <div class="menu-section">
-            <label for="theme-color-input">Customize Theme</label>
-            <div class="theme-inputs">
-                <input type="color" id="theme-color-picker" value="#8e44ad">
-                <input type="text" id="theme-color-input" placeholder="#8e44ad">
-            </div>
-            <div class="theme-buttons">
-                <button class="btn" id="apply-theme">Apply</button>
-                <button class="btn btn-secondary" id="reset-theme">Reset</button>
-            </div>
-        </div>
-        <div class="menu-section">
             <label>Export / Import</label>
             <button class="btn" id="export-json">Export JSON</button>
             <button class="btn" id="import-json-btn">Import JSON</button>
@@ -511,6 +570,45 @@
         </div>
         <div class="menu-section">
             <button class="btn" id="menu-stopwatch">Stopwatch</button>
+        </div>
+        <div class="menu-section">
+            <h2>Customize Theme</h2>
+            <div class="theme-control-group">
+                <label for="theme-color-input">Primary Color</label>
+                <div class="theme-inputs">
+                    <input type="color" id="theme-color-picker">
+                    <input type="text" id="theme-color-input">
+                </div>
+            </div>
+             <div class="theme-control-group">
+                <label for="bg-color-input">Background Color</label>
+                <div class="theme-inputs">
+                    <input type="color" id="bg-color-picker">
+                    <input type="text" id="bg-color-input">
+                </div>
+            </div>
+             <div class="theme-control-group">
+                <label for="card-bg-color-input">Card Color</label>
+                <div class="theme-inputs">
+                    <input type="color" id="card-bg-color-picker">
+                    <input type="text" id="card-bg-color-input">
+                </div>
+            </div>
+            <div class="theme-control-group">
+                <label for="text-color-input">Text Color</label>
+                <div class="theme-inputs">
+                    <input type="color" id="text-color-picker">
+                    <input type="text" id="text-color-input">
+                </div>
+            </div>
+            <div class="theme-buttons">
+                <button class="btn" id="apply-theme">Apply</button>
+                <button class="btn btn-secondary" id="reset-theme">Reset</button>
+            </div>
+        </div>
+         <div class="menu-section">
+             <label>Danger Zone</label>
+             <button class="btn btn-danger" id="delete-data-btn">Delete All Data</button>
         </div>
     </nav>
 
@@ -558,6 +656,51 @@
         </div>
     </div>
 
+    <!-- CSV Date Range Modal -->
+    <div id="csv-modal-overlay" class="overlay modal-overlay">
+        <div class="modal-content">
+            <h2>Export Date Range</h2>
+            <div class="date-range-inputs" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label for="csv-start-date" style="display: block; margin-bottom: 0.5rem; text-align: left;">Start Date</label>
+                    <input type="date" id="csv-start-date" style="width: 100%; padding: 0.5rem; background-color: var(--bg-color); border: 1px solid var(--theme-color-dark); color: var(--text-color); border-radius: 8px; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div>
+                    <label for="csv-end-date" style="display: block; margin-bottom: 0.5rem; text-align: left;">End Date</label>
+                    <input type="date" id="csv-end-date" style="width: 100%; padding: 0.5rem; background-color: var(--bg-color); border: 1px solid var(--theme-color-dark); color: var(--text-color); border-radius: 8px; font-family: 'Poppins', sans-serif;">
+                </div>
+            </div>
+            <div class="modal-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button class="btn" id="csv-confirm-export">Export</button>
+                <button class="btn btn-secondary" id="csv-cancel-export">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Reminder Modal -->
+    <div id="reminder-modal-overlay" class="overlay modal-overlay">
+        <div class="modal-content">
+            <h2>Weekly Reminder</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-color-secondary);">It's Sunday! A great time to back up your meditation history.</p>
+            <div class="modal-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button class="btn" id="reminder-export-btn">Export Now</button>
+                <button class="btn btn-secondary" id="reminder-later-btn">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal-overlay" class="overlay modal-overlay">
+        <div class="modal-content">
+            <h2>Are you sure?</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-color-secondary);">This action will permanently delete all your meditation history. This cannot be undone.</p>
+            <div class="modal-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button class="btn btn-danger" id="delete-confirm-btn">Confirm Delete</button>
+                <button class="btn btn-secondary" id="delete-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast"></div>
 
@@ -571,6 +714,7 @@
             const morningInput = document.getElementById('morning-duration');
             const eveningInput = document.getElementById('evening-duration');
             const totalMinutesDisplay = document.getElementById('total-minutes');
+            const emojiIndicator = document.getElementById('emoji-indicator');
             const saveMorningBtn = document.getElementById('save-morning');
             const saveEveningBtn = document.getElementById('save-evening');
             const menuToggleBtn = document.getElementById('menu-toggle-btn');
@@ -580,10 +724,6 @@
             const historyOverlay = document.getElementById('history-overlay');
             const closeHistoryBtn = document.getElementById('close-history');
             const historyTableBody = document.querySelector('#history-table tbody');
-            const themeColorInput = document.getElementById('theme-color-input');
-            const themeColorPicker = document.getElementById('theme-color-picker');
-            const applyThemeBtn = document.getElementById('apply-theme');
-            const resetThemeBtn = document.getElementById('reset-theme');
             const exportJsonBtn = document.getElementById('export-json');
             const importJsonBtn = document.getElementById('import-json-btn');
             const importJsonInput = document.getElementById('import-json-input');
@@ -599,11 +739,43 @@
             const stopwatchAddMorningBtn = document.getElementById('stopwatch-add-morning');
             const stopwatchAddEveningBtn = document.getElementById('stopwatch-add-evening');
             const toast = document.getElementById('toast');
+            
+            const csvModalOverlay = document.getElementById('csv-modal-overlay');
+            const csvStartDate = document.getElementById('csv-start-date');
+            const csvEndDate = document.getElementById('csv-end-date');
+            const csvConfirmExportBtn = document.getElementById('csv-confirm-export');
+            const csvCancelExportBtn = document.getElementById('csv-cancel-export');
+            const reminderModalOverlay = document.getElementById('reminder-modal-overlay');
+            const reminderExportBtn = document.getElementById('reminder-export-btn');
+            const reminderLaterBtn = document.getElementById('reminder-later-btn');
 
+            // Theme Elements
+            const themeColorInput = document.getElementById('theme-color-input');
+            const themeColorPicker = document.getElementById('theme-color-picker');
+            const bgColorInput = document.getElementById('bg-color-input');
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            const cardBgColorInput = document.getElementById('card-bg-color-input');
+            const cardBgColorPicker = document.getElementById('card-bg-color-picker');
+            const textColorInput = document.getElementById('text-color-input');
+            const textColorPicker = document.getElementById('text-color-picker');
+            const applyThemeBtn = document.getElementById('apply-theme');
+            const resetThemeBtn = document.getElementById('reset-theme');
+            
+            // Delete Data Elements
+            const deleteDataBtn = document.getElementById('delete-data-btn');
+            const deleteModalOverlay = document.getElementById('delete-modal-overlay');
+            const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+            const deleteCancelBtn = document.getElementById('delete-cancel-btn');
 
             // --- STATE & CONSTANTS ---
             const STORAGE_KEY = 'meditation_tracking_v1';
-            const DEFAULT_THEME = '#8e44ad';
+            const THEME_SETTINGS_KEY = 'meditation_theme_settings_v1';
+            const DEFAULT_THEME_SETTINGS = {
+                '--theme-color': '#8e44ad',
+                '--bg-color': '#1a1a2e',
+                '--card-bg-color': '#2c2c54',
+                '--text-color': '#f0f0f0',
+            };
             let data = [];
             let stopwatchInterval = null;
             let stopwatchState = { elapsed: 0, startTime: 0, isRunning: false };
@@ -671,9 +843,21 @@
                 const morning = record ? record.morning : 0;
                 const evening = record ? record.evening : 0;
                 
-                morningInput.value = morning;
-                eveningInput.value = evening;
-                totalMinutesDisplay.textContent = morning + evening;
+                morningInput.value = morning > 0 ? morning : '';
+                eveningInput.value = evening > 0 ? evening : '';
+                
+                const total = morning + evening;
+                totalMinutesDisplay.textContent = total;
+
+                if (total === 0) {
+                    emojiIndicator.textContent = '☹️';
+                } else if (total < 30) {
+                    emojiIndicator.textContent = '😃';
+                } else if (total < 60) {
+                    emojiIndicator.textContent = '😍';
+                } else {
+                    emojiIndicator.textContent = '🔥';
+                }
 
                 const displayDate = new Date(isoDate + 'T00:00:00');
                 const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -707,7 +891,7 @@
             const showToast = (message) => {
                 toast.textContent = message;
                 toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
+                setTimeout(() => toast.classList.remove('show'), 500);
             };
 
             // --- DATE & TIME UTILS ---
@@ -720,16 +904,30 @@
 
             const handleSave = (session) => {
                 const input = session === 'morning' ? morningInput : eveningInput;
-                const minutes = parseInt(input.value, 10);
-                if (isNaN(minutes) || minutes < 0) {
+                const minutes = parseInt(input.value, 10) || 0;
+                if (minutes < 0) {
                     showToast('Invalid input. Please enter a positive number.');
-                    input.value = getRecordForDate(datePicker.value)?.[session] || 0;
+                    const record = getRecordForDate(datePicker.value);
+                    const sessionMinutes = record ? record[session] : 0;
+                    input.value = sessionMinutes > 0 ? sessionMinutes : '';
                     return;
                 }
                 addOrUpdateRecord(datePicker.value, session, minutes);
                 showToast(`${session.charAt(0).toUpperCase() + session.slice(1)} session saved!`);
             };
             
+            const handleQuickSelect = (e) => {
+                const button = e.target.closest('.btn-quick-select');
+                if (!button) return;
+
+                const value = button.dataset.value;
+                const card = button.closest('.card');
+                const input = card.querySelector('input[type="number"]');
+                if (input) {
+                    input.value = value;
+                }
+            };
+
             const toggleMenu = () => {
                 sideMenu.classList.toggle('open');
                 menuOverlay.classList.toggle('active');
@@ -738,55 +936,89 @@
             const openHistory = () => {
                 renderHistoryTable();
                 historyOverlay.classList.add('active');
-                toggleMenu();
+                if (sideMenu.classList.contains('open')) toggleMenu();
             };
             const closeHistory = () => historyOverlay.classList.remove('active');
 
             // --- THEME ---
-            const applyTheme = (color) => {
+            const applyTheme = (settings) => {
                 const hexColorRegex = /^#([0-9a-f]{3}){1,2}$/i;
-                if (!hexColorRegex.test(color)) {
-                    showToast('Invalid HEX color format.');
-                    return false;
+                for (const [key, value] of Object.entries(settings)) {
+                    if (!hexColorRegex.test(value)) {
+                        showToast(`Invalid HEX color format for ${key}.`);
+                        return false;
+                    }
+                    document.documentElement.style.setProperty(key, value);
                 }
-                document.documentElement.style.setProperty('--theme-color', color);
                 
-                // Simple darkening for hover state.
+                const themeColor = settings['--theme-color'];
                 let r = 0, g = 0, b = 0;
-                if (color.length === 4) {
-                    r = parseInt(color[1] + color[1], 16);
-                    g = parseInt(color[2] + color[2], 16);
-                    b = parseInt(color[3] + color[3], 16);
-                } else if (color.length === 7) {
-                    r = parseInt(color.slice(1, 3), 16);
-                    g = parseInt(color.slice(3, 5), 16);
-                    b = parseInt(color.slice(5, 7), 16);
+                if (themeColor.length === 4) {
+                    r = parseInt(themeColor[1] + themeColor[1], 16);
+                    g = parseInt(themeColor[2] + themeColor[2], 16);
+                    b = parseInt(themeColor[3] + themeColor[3], 16);
+                } else if (themeColor.length === 7) {
+                    r = parseInt(themeColor.slice(1, 3), 16);
+                    g = parseInt(themeColor.slice(3, 5), 16);
+                    b = parseInt(themeColor.slice(5, 7), 16);
                 }
                 const darkerColor = `rgb(${Math.max(0, r-20)}, ${Math.max(0, g-20)}, ${Math.max(0, b-20)})`;
                 document.documentElement.style.setProperty('--theme-color-dark', darkerColor);
+
+                const deleteConfirmButton = document.getElementById('delete-confirm-btn');
+                if (deleteConfirmButton) {
+                    deleteConfirmButton.style.backgroundColor = settings['--theme-color'];
+                }
+
                 return true;
             };
 
+            const updateThemeInputs = (theme) => {
+                themeColorInput.value = theme['--theme-color'];
+                themeColorPicker.value = theme['--theme-color'];
+                bgColorInput.value = theme['--bg-color'];
+                bgColorPicker.value = theme['--bg-color'];
+                cardBgColorInput.value = theme['--card-bg-color'];
+                cardBgColorPicker.value = theme['--card-bg-color'];
+                textColorInput.value = theme['--text-color'];
+                textColorPicker.value = theme['--text-color'];
+            };
+            
+            const loadTheme = () => {
+                const savedSettings = localStorage.getItem(THEME_SETTINGS_KEY);
+                const theme = savedSettings ? JSON.parse(savedSettings) : DEFAULT_THEME_SETTINGS;
+                applyTheme(theme);
+                updateThemeInputs(theme);
+            };
+
             const handleThemeApply = () => {
-                if (applyTheme(themeColorInput.value)) {
-                    localStorage.setItem('themeColor', themeColorInput.value);
+                const newSettings = {
+                    '--theme-color': themeColorInput.value,
+                    '--bg-color': bgColorInput.value,
+                    '--card-bg-color': cardBgColorInput.value,
+                    '--text-color': textColorInput.value,
+                };
+                if (applyTheme(newSettings)) {
+                    localStorage.setItem(THEME_SETTINGS_KEY, JSON.stringify(newSettings));
                     showToast('Theme applied!');
                 }
             };
             
             const handleThemeReset = () => {
-                applyTheme(DEFAULT_THEME);
-                localStorage.removeItem('themeColor');
-                themeColorInput.value = DEFAULT_THEME;
-                themeColorPicker.value = DEFAULT_THEME;
+                applyTheme(DEFAULT_THEME_SETTINGS);
+                updateThemeInputs(DEFAULT_THEME_SETTINGS);
+                localStorage.removeItem(THEME_SETTINGS_KEY);
                 showToast('Theme reset to default.');
             };
 
             // --- EXPORT / IMPORT ---
-            const generateCSV = () => {
+            const generateCSV = (startDate, endDate) => {
                 let csvContent = "S.No,Date(dd/mm/yyyy),Day,Morning (min),Evening (min),Total (min)\n";
-                const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
-
+                let filteredData = [...data];
+                if (startDate && endDate) {
+                    filteredData = filteredData.filter(record => record.date >= startDate && record.date <= endDate);
+                }
+                const sortedData = filteredData.sort((a, b) => new Date(a.date) - new Date(b.date));
                 sortedData.forEach((record, index) => {
                     const displayDate = new Date(record.date + 'T00:00:00');
                     const day = displayDate.toLocaleDateString('en-US', { weekday: 'short' });
@@ -810,17 +1042,39 @@
                 downloadFile(JSON.stringify(data, null, 2), 'meditation_data.json', 'application/json');
                 showToast('JSON data exported.');
             };
+
+            const openCsvModal = () => {
+                if (data.length === 0) {
+                    showToast('No data to export.');
+                    return;
+                }
+                const sortedData = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+                csvStartDate.value = sortedData[0].date;
+                csvEndDate.value = sortedData[sortedData.length - 1].date;
+                csvModalOverlay.classList.add('active');
+            };
+            const closeCsvModal = () => csvModalOverlay.classList.remove('active');
+
+            const handleConfirmExport = () => {
+                const startDate = csvStartDate.value;
+                const endDate = csvEndDate.value;
+                if (!startDate || !endDate || new Date(startDate) > new Date(endDate)) {
+                    showToast('Invalid date range.');
+                    return;
+                }
+                const csv = generateCSV(startDate, endDate);
+                downloadFile(csv, `meditation_history_${startDate}_to_${endDate}.csv`, 'text/csv;charset=utf-8;');
+                showToast('CSV data exported.');
+                closeCsvModal();
+            };
             
             const handleExportCsv = () => {
-                const csv = generateCSV();
-                downloadFile(csv, 'meditation_history.csv', 'text/csv;charset=utf-8;');
-                showToast('CSV data exported.');
+                openCsvModal();
             };
 
             const handleImportJson = (event) => {
                 const file = event.target.files[0];
                 if (!file) return;
-
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
@@ -851,13 +1105,11 @@
                 const seconds = (totalSeconds % 60).toString().padStart(2, '0');
                 return `${hours}:${minutes}:${seconds}`;
             };
-            
             const updateStopwatchDisplay = () => {
                 const now = Date.now();
                 const elapsed = stopwatchState.elapsed + (stopwatchState.isRunning ? now - stopwatchState.startTime : 0);
                 stopwatchDisplay.textContent = formatTime(elapsed);
             };
-
             const startStopwatch = () => {
                 if (!stopwatchState.isRunning) {
                     stopwatchState.isRunning = true;
@@ -865,7 +1117,6 @@
                     stopwatchInterval = setInterval(updateStopwatchDisplay, 1000);
                 }
             };
-            
             const pauseStopwatch = () => {
                 if (stopwatchState.isRunning) {
                     stopwatchState.isRunning = false;
@@ -873,21 +1124,19 @@
                     clearInterval(stopwatchInterval);
                 }
             };
-            
             const resetStopwatch = () => {
                 pauseStopwatch();
                 stopwatchState.elapsed = 0;
                 updateStopwatchDisplay();
             };
-
             const addStopwatchToSession = (session) => {
                 pauseStopwatch();
                 const totalMs = stopwatchState.elapsed;
                 const totalMinutes = Math.round(totalMs / 1000 / 60);
-
                 if (totalMinutes > 0) {
                     const input = session === 'morning' ? morningInput : eveningInput;
-                    const currentMinutes = parseInt(getRecordForDate(datePicker.value)?.[session] || 0, 10);
+                    const record = getRecordForDate(datePicker.value);
+                    const currentMinutes = (record && record[session]) ? parseInt(record[session], 10) : 0;
                     input.value = currentMinutes + totalMinutes;
                     handleSave(session);
                     resetStopwatch();
@@ -896,37 +1145,90 @@
                     showToast('Stopwatch time is less than a minute.');
                 }
             };
-            
             const openStopwatch = () => {
                 stopwatchModalOverlay.classList.add('active');
-                toggleMenu();
+                if (sideMenu.classList.contains('open')) toggleMenu();
             };
             const closeStopwatch = () => stopwatchModalOverlay.classList.remove('active');
 
+            // --- WEEKLY REMINDER ---
+            const openReminderModal = () => reminderModalOverlay.classList.add('active');
+            const closeReminderModal = () => reminderModalOverlay.classList.remove('active');
+            const checkWeeklyReminder = () => {
+                const today = new Date();
+                const todayISO = today.toISOString().split('T')[0];
+                const reminderKey = `meditation_reminder_shown_${todayISO}`;
+                if (today.getDay() === 0 && !localStorage.getItem(reminderKey)) {
+                    openReminderModal();
+                    localStorage.setItem(reminderKey, 'true');
+                }
+            };
+
+            // --- DELETE DATA ---
+            const openDeleteModal = () => {
+                const deleteConfirmButton = document.getElementById('delete-confirm-btn');
+                deleteConfirmButton.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--danger-color');
+                deleteModalOverlay.classList.add('active');
+                 if (sideMenu.classList.contains('open')) toggleMenu();
+            };
+            const closeDeleteModal = () => deleteModalOverlay.classList.remove('active');
+            const handleDeleteDataConfirmed = () => {
+                data = [];
+                saveDataToStorage();
+                updateUIForDate(getTodayISO());
+                closeDeleteModal();
+                showToast('All data has been deleted.');
+            };
+
             // --- INITIALIZATION ---
             const init = () => {
-                // Setup Event Listeners
+                // Main Listeners
                 datePicker.addEventListener('change', handleDateChange);
                 saveMorningBtn.addEventListener('click', () => handleSave('morning'));
                 eveningInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleSave('evening'); });
                 morningInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleSave('morning'); });
                 saveEveningBtn.addEventListener('click', () => handleSave('evening'));
+                document.querySelector('main').addEventListener('click', handleQuickSelect);
+                
+                // Menu Listeners
                 menuToggleBtn.addEventListener('click', toggleMenu);
                 menuOverlay.addEventListener('click', toggleMenu);
                 historyBtn.addEventListener('click', openHistory);
                 closeHistoryBtn.addEventListener('click', closeHistory);
                 
-                themeColorPicker.addEventListener('input', (e) => { themeColorInput.value = e.target.value; });
-                themeColorInput.addEventListener('change', (e) => { themeColorPicker.value = e.target.value; });
+                // Theme Listeners
+                const themeInputs = [
+                    { picker: themeColorPicker, input: themeColorInput },
+                    { picker: bgColorPicker, input: bgColorInput },
+                    { picker: cardBgColorPicker, input: cardBgColorInput },
+                    { picker: textColorPicker, input: textColorInput }
+                ];
+                themeInputs.forEach(({ picker, input }) => {
+                    picker.addEventListener('input', (e) => { input.value = e.target.value; });
+                    input.addEventListener('change', (e) => { picker.value = e.target.value; });
+                });
                 applyThemeBtn.addEventListener('click', handleThemeApply);
                 resetThemeBtn.addEventListener('click', handleThemeReset);
                 
+                // Export/Import Listeners
                 exportJsonBtn.addEventListener('click', handleExportJson);
                 exportCsvBtn.addEventListener('click', handleExportCsv);
                 downloadCsvHistoryBtn.addEventListener('click', handleExportCsv);
                 importJsonBtn.addEventListener('click', () => importJsonInput.click());
                 importJsonInput.addEventListener('change', handleImportJson);
                 
+                // CSV Modal Listeners
+                csvConfirmExportBtn.addEventListener('click', handleConfirmExport);
+                csvCancelExportBtn.addEventListener('click', closeCsvModal);
+
+                // Reminder Modal Listeners
+                reminderExportBtn.addEventListener('click', () => {
+                    closeReminderModal();
+                    handleExportCsv();
+                });
+                reminderLaterBtn.addEventListener('click', closeReminderModal);
+                
+                // Stopwatch Listeners
                 stopwatchBtn.addEventListener('click', openStopwatch);
                 stopwatchCloseBtn.addEventListener('click', closeStopwatch);
                 stopwatchStartBtn.addEventListener('click', startStopwatch);
@@ -935,15 +1237,18 @@
                 stopwatchAddMorningBtn.addEventListener('click', () => addStopwatchToSession('morning'));
                 stopwatchAddEveningBtn.addEventListener('click', () => addStopwatchToSession('evening'));
 
+                // Delete Data Listeners
+                deleteDataBtn.addEventListener('click', openDeleteModal);
+                deleteCancelBtn.addEventListener('click', closeDeleteModal);
+                deleteConfirmBtn.addEventListener('click', handleDeleteDataConfirmed);
+
                 // Load initial state
                 loadDataFromStorage();
                 backfillMissingDays();
-                const savedTheme = localStorage.getItem('themeColor') || DEFAULT_THEME;
-                applyTheme(savedTheme);
-                themeColorInput.value = savedTheme;
-                themeColorPicker.value = savedTheme;
+                loadTheme();
                 datePicker.value = getTodayISO();
                 updateUIForDate(datePicker.value);
+                checkWeeklyReminder();
             };
 
             init();
