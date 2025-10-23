@@ -1,0 +1,21 @@
+{
+  "name": "Daily Meditation",
+  "short_name": "Meditation",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#8e44ad",
+  "description": "A beautiful, offline-first app to track daily morning and evening meditation sessions.",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
