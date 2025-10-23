@@ -874,6 +874,13 @@
             };
 
             // --- UI UPDATE FUNCTIONS ---
+            const updateHeaderDate = () => {
+                const today = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
+                const formattedDate = today.toLocaleDateString('en-GB', options).replace(/,/g, ' —');
+                currentDateDisplay.textContent = formattedDate;
+            };
+
             const updateUIForDate = (isoDate) => {
                 const record = getRecordForDate(isoDate);
                 const morning = record ? record.morning : 0;
@@ -894,11 +901,6 @@
                 } else {
                     emojiIndicator.textContent = '🔥';
                 }
-
-                const displayDate = new Date(isoDate + 'T00:00:00');
-                const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
-                const formattedDate = displayDate.toLocaleDateString('en-GB', options).replace(/,/g, ' —');
-                currentDateDisplay.textContent = formattedDate;
             };
 
             const renderHistoryTable = () => {
@@ -1314,6 +1316,7 @@
                 loadTheme();
                 loadGlobalSize();
                 datePicker.value = getTodayISO();
+                updateHeaderDate();
                 updateUIForDate(datePicker.value);
                 checkWeeklyReminder();
 
