@@ -4,7 +4,7 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#1a1a2e",
-  "theme_color": "#8e44ad",
+  "theme_color": "#1a1a2e",
   "description": "A beautiful, offline-first app to track daily morning and evening meditation sessions.",
   "icons": [
     {
