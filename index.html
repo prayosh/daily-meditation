@@ -7,7 +7,7 @@
     <title>Meditation Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#1a1a2e"/>
@@ -81,6 +81,19 @@
 
         header {
             text-align: center;
+        }
+
+        #meditation-emoji {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: -1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
         header h1 {
@@ -490,20 +503,6 @@
             transition: color 0.3s ease;
         }
 
-        #stopwatch-display {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            letter-spacing: 2px;
-        }
-
-        .stopwatch-controls, .stopwatch-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
         #toast {
             position: fixed;
             bottom: -100px;
@@ -522,6 +521,156 @@
             bottom: 2rem;
         }
 
+        /* Timer and Stopwatch Styles */
+        .timer-stopwatch-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            border: 1px solid var(--theme-color-dark);
+            transition: background-color 0.3s ease;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            background-color: transparent;
+            color: var(--text-color-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .tab-btn.active {
+            background-color: var(--theme-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        .large-display {
+            font-size: 5rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            font-family: 'Roboto Mono', monospace;
+            color: var(--theme-color);
+            transition: color 0.3s ease;
+        }
+
+        .timer-presets {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            align-items: center;
+        }
+
+        .themed-select {
+            flex-grow: 1;
+            padding: 0.75rem;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--theme-color-dark);
+            color: var(--text-color);
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+        
+        .timer-controls, .stopwatch-controls, .stopwatch-actions {
+            display: grid;
+            width: 100%;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .stopwatch-actions-label {
+            color: var(--text-color-secondary);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        #preset-list-container {
+            width: 100%;
+            text-align: left;
+        }
+
+        .preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--theme-color-dark);
+        }
+        .preset-item:last-child {
+            border-bottom: none;
+        }
+
+        .preset-item-actions button {
+            background: none;
+            border: none;
+            color: var(--text-color-secondary);
+            cursor: pointer;
+            margin-left: 0.5rem;
+            font-size: 1rem;
+        }
+        .preset-item-actions button:hover {
+            color: var(--theme-color);
+        }
+
+        #preset-form input[type="text"],
+        #preset-form input[type="number"] {
+            padding: 0.5rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--theme-color-dark);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border-width: 0;
+        }
+
         @media (max-width: 768px) {
             body { padding: 0.5rem; }
             #app-container { gap: 1rem; padding-bottom: 70px; }
@@ -533,6 +682,7 @@
             .full-overlay { padding: 1rem; }
             .full-overlay-header h2 { font-size: 1.5rem; }
             #history-table th, #history-table td { padding: 0.5rem; font-size: 0.9rem; }
+            .large-display { font-size: 4rem; }
         }
     </style>
 </head>
@@ -540,6 +690,7 @@
 
     <div id="app-container">
         <header>
+            <div id="meditation-emoji">🧘‍♀️</div>
             <h1>Daily Meditation</h1>
             <p id="current-date-display">22/10/2025 — Wednesday</p>
             <input type="date" id="date-picker">
@@ -599,7 +750,7 @@
             <button class="btn" id="export-csv">Export Excel (CSV)</button>
         </div>
         <div class="menu-section">
-            <button class="btn" id="menu-stopwatch">Stopwatch</button>
+            <button class="btn" id="menu-stopwatch">Timer & Stopwatch</button>
         </div>
         <div class="menu-section">
             <h2>Customize Theme</h2>
@@ -672,21 +823,75 @@
         </div>
     </div>
     
-    <!-- Stopwatch Modal -->
-    <div id="stopwatch-modal-overlay" class="overlay modal-overlay">
+    <!-- Timer & Stopwatch Overlay -->
+    <div id="timer-stopwatch-overlay" class="overlay full-overlay">
+        <div class="full-overlay-header">
+            <h2>Timer & Stopwatch</h2>
+            <button class="btn btn-secondary" id="close-timer-stopwatch">Home</button>
+        </div>
+        <div class="timer-stopwatch-container">
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="timer">Timer</button>
+                <button class="tab-btn" data-tab="stopwatch">Stopwatch</button>
+            </div>
+            <!-- Timer Content -->
+            <div id="timer-content" class="tab-content active">
+                <div id="timer-display" class="large-display">05:00</div>
+                <div class="timer-presets">
+                    <label for="timer-preset-select" class="sr-only">Select Timer Preset</label>
+                    <select id="timer-preset-select" class="themed-select"></select>
+                    <button id="manage-presets-btn" class="btn btn-secondary">Manage</button>
+                </div>
+                <div class="timer-controls">
+                    <button class="btn" id="timer-start-pause">Start</button>
+                    <button class="btn btn-danger" id="timer-reset">Reset</button>
+                </div>
+            </div>
+            <!-- Stopwatch Content -->
+            <div id="stopwatch-content" class="tab-content">
+                <div id="stopwatch-display" class="large-display">00:00:00</div>
+                <div class="stopwatch-controls">
+                    <button class="btn" id="stopwatch-start">Start</button>
+                    <button class="btn btn-secondary" id="stopwatch-pause">Pause</button>
+                    <button class="btn btn-danger" id="stopwatch-reset">Reset</button>
+                </div>
+                <p class="stopwatch-actions-label">When done, add time to today's session:</p>
+                <div class="stopwatch-actions">
+                    <button class="btn" id="stopwatch-add-morning">Add to Morning</button>
+                    <button class="btn" id="stopwatch-add-evening">Add to Evening</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preset Management Modal -->
+    <div id="preset-modal-overlay" class="overlay modal-overlay">
         <div class="modal-content">
-            <h2>Stopwatch</h2>
-            <div id="stopwatch-display">00:00:00</div>
-            <div class="stopwatch-controls">
-                <button class="btn" id="stopwatch-start">Start</button>
-                <button class="btn btn-secondary" id="stopwatch-pause">Pause</button>
-                <button class="btn btn-danger" id="stopwatch-reset">Reset</button>
+            <h2>Manage Presets</h2>
+            <div id="preset-list-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 1.5rem;">
+                <!-- Presets will be rendered here -->
             </div>
-            <div class="stopwatch-actions">
-                <button class="btn" id="stopwatch-add-morning">Add to Morning</button>
-                <button class="btn" id="stopwatch-add-evening">Add to Evening</button>
-            </div>
-            <button class="btn btn-secondary" id="stopwatch-close" style="margin-top: 1rem; width: 100%;">Close</button>
+            <form id="preset-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                <input type="hidden" id="preset-id">
+                <div>
+                    <label for="preset-name" style="display: block; text-align: left; margin-bottom: 0.5rem;">Preset Name</label>
+                    <input type="text" id="preset-name" placeholder="e.g., Short Break" required style="width: 100%;">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label for="preset-minutes" style="display: block; text-align: left; margin-bottom: 0.5rem;">Minutes</label>
+                        <input type="number" id="preset-minutes" min="0" max="90" value="5" required style="width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="preset-seconds" style="display: block; text-align: left; margin-bottom: 0.5rem;">Seconds</label>
+                        <input type="number" id="preset-seconds" min="0" max="59" value="0" required style="width: 100%;">
+                    </div>
+                </div>
+                <div class="modal-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <button type="submit" class="btn">Save Preset</button>
+                    <button type="button" class="btn btn-secondary" id="preset-cancel-btn">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -738,6 +943,9 @@
     <!-- Toast Notification -->
     <div id="toast"></div>
 
+    <!-- Alarm Sound -->
+    <audio id="alarm-sound" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU9vT19OAP/7/gD/+wD/+wD/+wD/9wD/9wD/9wD/9wD/9gD/9gD/9gD/9gD/9QD/9QD/9QD/9QD/9AD/9AD/9AD/8wD/8wD/8wD/8wD/8gD/8gD/8gD/8QD/8QD/8QD/8AD/8AD/7wD/7wD/7QD/7QD/7QD/6wD/6wD/6QD/6QD/6AD/6AD/5wD/5wD/5QD/5QD/5AD/5AD/4wD/4wD/4gD/4gD/4AD/3wD/3wD/3QD/3QD/3AD/2wD/2wD/2gD/2gD/2QD/2QD/1wD/1wD/1gD/1QD/1AD/0wD/0gD/0QD/0AD/zwD/zgD/zQD/zAD/ywD/ygD/yQD/xAD/wQD/vwD/uwD/tgD/tQD/swD/sgD/rwD/qgD/qQD/pwD/pgD/pQD/owD/ogD/nwD/nQD/mwD/mQD/lgD/lQD/kwD/kgD/jQD/jAD/iwD/iAD/hwD/ggD/fgD/fQD/fAD/eQD/eAD/dwD/dgD/dQD/cwD/cgD/bQD/bAD/awD/agD/ZgD/ZQD/ZAD/YwD/YAD/WwD/WgD/VwD/VQD/VAD/UwD/UgD/UQD/UAD/TwD/TAD/SwD/SgD/SQD/RwD/RgD/RQD/RAD/QwD/QgD/QQD/QAD/PwD/PgD/PQD/PCD/PAD/OwD/OgD/NwD/NgD/NQD/MwD/MgD/MQD/MD/LwD/KwD/JwD/JAD/IQD/Hz/HvwD/uwD/twD/swD/rwD/qgD/pQD/owD/nwD/mwD/lgD/kwD/jQD/iwD/hwD/fwD/eAD/dwD/cwD/bQD/awD/ZgD/YAD/WwD/VQD/UwD/SQD/QwD/QAD/PQD/OQD/NQD/MQD/LwD/KQD/IAD/Gz/Hz/LvD/JvD/HvD/GvD/FvD/EvD/DvD/CvD/BvD/AvD+/vD++vD+9vD+8vD+7vD+6vD+5vD+4vD+3vD+2vD+1vD+0vD+zvD+yvD+xvD+wvD+vvD+uvD+tvD+svD+rvD+qvD+pvD+ovD+nvD+mvD+lvD+kvD+jvD+ivD+hvD+fvD+evD+dvD+cvD+bvD+avD+"></audio>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             'use strict';
@@ -764,8 +972,6 @@
             const exportCsvBtn = document.getElementById('export-csv');
             const downloadCsvHistoryBtn = document.getElementById('download-csv-history');
             const stopwatchBtn = document.getElementById('menu-stopwatch');
-            const stopwatchModalOverlay = document.getElementById('stopwatch-modal-overlay');
-            const stopwatchCloseBtn = document.getElementById('stopwatch-close');
             const stopwatchDisplay = document.getElementById('stopwatch-display');
             const stopwatchStartBtn = document.getElementById('stopwatch-start');
             const stopwatchPauseBtn = document.getElementById('stopwatch-pause');
@@ -801,6 +1007,28 @@
             const deleteModalOverlay = document.getElementById('delete-modal-overlay');
             const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
             const deleteCancelBtn = document.getElementById('delete-cancel-btn');
+
+            // Timer & Stopwatch elements
+            const timerStopwatchOverlay = document.getElementById('timer-stopwatch-overlay');
+            const closeTimerStopwatchBtn = document.getElementById('close-timer-stopwatch');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const timerDisplay = document.getElementById('timer-display');
+            const timerPresetSelect = document.getElementById('timer-preset-select');
+            const managePresetsBtn = document.getElementById('manage-presets-btn');
+            const timerStartPauseBtn = document.getElementById('timer-start-pause');
+            const timerResetBtn = document.getElementById('timer-reset');
+            const alarmSound = document.getElementById('alarm-sound');
+
+            // Preset Management Modal elements
+            const presetModalOverlay = document.getElementById('preset-modal-overlay');
+            const presetListContainer = document.getElementById('preset-list-container');
+            const presetForm = document.getElementById('preset-form');
+            const presetIdInput = document.getElementById('preset-id');
+            const presetNameInput = document.getElementById('preset-name');
+            const presetMinutesInput = document.getElementById('preset-minutes');
+            const presetSecondsInput = document.getElementById('preset-seconds');
+            const presetCancelBtn = document.getElementById('preset-cancel-btn');
 
             // --- STATE & CONSTANTS ---
             const STORAGE_KEY = 'meditation_tracking_v1';
@@ -929,7 +1157,7 @@
             const showToast = (message) => {
                 toast.textContent = message;
                 toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 500);
+                setTimeout(() => toast.classList.remove('show'), 2000);
             };
 
             // --- DATE & TIME UTILS ---
@@ -946,7 +1174,6 @@
 
             const loadGlobalSize = () => {
                 const savedSize = localStorage.getItem(FONT_SIZE_KEY);
-                // Set default to smallest size
                 const scale = savedSize ? parseFloat(savedSize) : 0.8; 
                 applyGlobalSize(scale);
                 globalSizeSlider.value = scale;
@@ -1025,12 +1252,6 @@
                 }
                 const darkerColor = `rgb(${Math.max(0, r-20)}, ${Math.max(0, g-20)}, ${Math.max(0, b-20)})`;
                 document.documentElement.style.setProperty('--theme-color-dark', darkerColor);
-
-                const deleteConfirmButton = document.getElementById('delete-confirm-btn');
-                if (deleteConfirmButton) {
-                    deleteConfirmButton.style.backgroundColor = settings['--theme-color'];
-                }
-
                 return true;
             };
 
@@ -1070,7 +1291,6 @@
                 updateThemeInputs(DEFAULT_THEME_SETTINGS);
                 localStorage.removeItem(THEME_SETTINGS_KEY);
                 
-                // Also reset size to new compact default
                 applyGlobalSize(0.8);
                 globalSizeSlider.value = 0.8;
                 localStorage.removeItem(FONT_SIZE_KEY);
@@ -1165,7 +1385,7 @@
             };
 
             // --- STOPWATCH ---
-            const formatTime = (ms) => {
+            const formatStopwatchTime = (ms) => {
                 const totalSeconds = Math.floor(ms / 1000);
                 const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
                 const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
@@ -1175,7 +1395,7 @@
             const updateStopwatchDisplay = () => {
                 const now = Date.now();
                 const elapsed = stopwatchState.elapsed + (stopwatchState.isRunning ? now - stopwatchState.startTime : 0);
-                stopwatchDisplay.textContent = formatTime(elapsed);
+                stopwatchDisplay.textContent = formatStopwatchTime(elapsed);
             };
             const startStopwatch = () => {
                 if (!stopwatchState.isRunning) {
@@ -1207,16 +1427,196 @@
                     input.value = currentMinutes + totalMinutes;
                     handleSave(session);
                     resetStopwatch();
-                    closeStopwatch();
+                    closeTimerStopwatch();
                 } else {
                     showToast('Stopwatch time is less than a minute.');
                 }
             };
-            const openStopwatch = () => {
-                stopwatchModalOverlay.classList.add('active');
+
+            // --- TIMER & PRESETS ---
+            const TIMER_PRESETS_KEY = 'meditation_timer_presets_v1';
+            let timerPresets = [];
+            let timerState = { remaining: 0, totalDuration: 0, isRunning: false, intervalId: null };
+
+            const formatTimeForDisplay = (totalSeconds) => {
+                const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                return `${minutes}:${seconds}`;
+            };
+
+            const updateTimerDisplay = () => {
+                timerDisplay.textContent = formatTimeForDisplay(timerState.remaining);
+            };
+
+            const playAlarm = () => {
+                alarmSound.currentTime = 0;
+                alarmSound.play().catch(e => console.error("Error playing sound:", e));
+            };
+
+            const resetTimer = () => {
+                if (timerState.intervalId) {
+                    clearInterval(timerState.intervalId);
+                    timerState.intervalId = null;
+                }
+                timerState.isRunning = false;
+                timerStartPauseBtn.textContent = 'Start';
+                timerState.remaining = timerState.totalDuration;
+                updateTimerDisplay();
+            };
+
+            const startPauseTimer = () => {
+                if (timerState.isRunning) { // Pause
+                    clearInterval(timerState.intervalId);
+                    timerState.intervalId = null;
+                    timerState.isRunning = false;
+                    timerStartPauseBtn.textContent = 'Resume';
+                } else { // Start/Resume
+                    if (timerState.remaining <= 0) return;
+                    timerState.isRunning = true;
+                    timerStartPauseBtn.textContent = 'Pause';
+                    timerState.intervalId = setInterval(() => {
+                        timerState.remaining--;
+                        updateTimerDisplay();
+                        if (timerState.remaining <= 0) {
+                            clearInterval(timerState.intervalId);
+                            timerState.intervalId = null;
+                            timerState.isRunning = false;
+                            timerStartPauseBtn.textContent = 'Start';
+                            playAlarm();
+                        }
+                    }, 1000);
+                }
+            };
+
+            const handlePresetChange = () => {
+                const selectedId = timerPresetSelect.value;
+                const selectedPreset = timerPresets.find(p => p.id === selectedId);
+                if (!selectedPreset) return;
+                const totalSeconds = selectedPreset.minutes * 60 + selectedPreset.seconds;
+                timerState.totalDuration = totalSeconds;
+                resetTimer();
+            };
+
+            const saveTimerPresets = () => {
+                localStorage.setItem(TIMER_PRESETS_KEY, JSON.stringify(timerPresets));
+            };
+
+            const renderPresetDropdown = () => {
+                timerPresetSelect.innerHTML = '';
+                timerPresets.forEach(preset => {
+                    const option = document.createElement('option');
+                    option.value = preset.id;
+                    option.textContent = `${preset.name} (${formatTimeForDisplay(preset.minutes * 60 + preset.seconds)})`;
+                    timerPresetSelect.appendChild(option);
+                });
+                handlePresetChange();
+            };
+
+            const loadTimerPresets = () => {
+                const storedPresets = localStorage.getItem(TIMER_PRESETS_KEY);
+                if (!storedPresets) {
+                    timerPresets = [
+                        { id: `preset_${Date.now()}_1`, name: 'Quick Break', minutes: 5, seconds: 0 },
+                        { id: `preset_${Date.now()}_2`, name: 'Standard Session', minutes: 15, seconds: 0 },
+                        { id: `preset_${Date.now()}_3`, name: 'Deep Focus', minutes: 30, seconds: 0 },
+                    ];
+                    saveTimerPresets();
+                } else {
+                    timerPresets = JSON.parse(storedPresets);
+                }
+                renderPresetDropdown();
+            };
+
+            const openPresetManager = () => {
+                renderPresetList();
+                presetModalOverlay.classList.add('active');
+            };
+            const closePresetManager = () => {
+                presetForm.reset();
+                presetIdInput.value = '';
+                presetModalOverlay.classList.remove('active');
+            };
+
+            const handlePresetDelete = (id) => {
+                timerPresets = timerPresets.filter(p => p.id !== id);
+                saveTimerPresets();
+                renderPresetDropdown();
+                renderPresetList();
+            };
+
+            const handlePresetEdit = (id) => {
+                const preset = timerPresets.find(p => p.id === id);
+                if (preset) {
+                    presetIdInput.value = preset.id;
+                    presetNameInput.value = preset.name;
+                    presetMinutesInput.value = preset.minutes;
+                    presetSecondsInput.value = preset.seconds;
+                }
+            };
+
+            const renderPresetList = () => {
+                presetListContainer.innerHTML = '';
+                if (timerPresets.length === 0) {
+                    presetListContainer.innerHTML = `<p style="color: var(--text-color-secondary)">No presets yet. Add one below!</p>`;
+                    return;
+                }
+                timerPresets.forEach(preset => {
+                    const item = document.createElement('div');
+                    item.className = 'preset-item';
+                    item.innerHTML = `
+                        <span>${preset.name} (${formatTimeForDisplay(preset.minutes * 60 + preset.seconds)})</span>
+                        <div class="preset-item-actions">
+                            <button aria-label="Edit preset" data-action="edit" data-id="${preset.id}">✏️</button>
+                            <button aria-label="Delete preset" data-action="delete" data-id="${preset.id}">🗑️</button>
+                        </div>
+                    `;
+                    presetListContainer.appendChild(item);
+                });
+            };
+
+            const handlePresetFormSubmit = (e) => {
+                e.preventDefault();
+                const id = presetIdInput.value;
+                const name = presetNameInput.value.trim();
+                const minutes = parseInt(presetMinutesInput.value, 10);
+                const seconds = parseInt(presetSecondsInput.value, 10);
+
+                if (!name || isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || seconds > 59) {
+                    showToast('Invalid preset details.');
+                    return;
+                }
+
+                if (id) { // Editing existing
+                    const index = timerPresets.findIndex(p => p.id === id);
+                    if (index > -1) {
+                        timerPresets[index] = { id, name, minutes, seconds };
+                    }
+                } else { // Adding new
+                    timerPresets.push({ id: `preset_${Date.now()}`, name, minutes, seconds });
+                }
+                
+                saveTimerPresets();
+                renderPresetDropdown();
+                renderPresetList();
+                closePresetManager();
+                showToast('Preset saved!');
+            };
+
+            // Tab switching logic
+            const handleTabSwitch = (e) => {
+                const targetTab = e.target.dataset.tab;
+                if (!targetTab) return;
+                tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === targetTab));
+                tabContents.forEach(content => {
+                    content.classList.toggle('active', content.id === `${targetTab}-content`);
+                });
+            };
+
+            const openTimerStopwatch = () => {
+                timerStopwatchOverlay.classList.add('active');
                 if (sideMenu.classList.contains('open')) toggleMenu();
             };
-            const closeStopwatch = () => stopwatchModalOverlay.classList.remove('active');
+            const closeTimerStopwatch = () => timerStopwatchOverlay.classList.remove('active');
 
             // --- WEEKLY REMINDER ---
             const openReminderModal = () => reminderModalOverlay.classList.add('active');
@@ -1233,10 +1633,8 @@
 
             // --- DELETE DATA ---
             const openDeleteModal = () => {
-                const deleteConfirmButton = document.getElementById('delete-confirm-btn');
-                deleteConfirmButton.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--danger-color');
                 deleteModalOverlay.classList.add('active');
-                 if (sideMenu.classList.contains('open')) toggleMenu();
+                if (sideMenu.classList.contains('open')) toggleMenu();
             };
             const closeDeleteModal = () => deleteModalOverlay.classList.remove('active');
             const handleDeleteDataConfirmed = () => {
@@ -1296,9 +1694,30 @@
                 });
                 reminderLaterBtn.addEventListener('click', closeReminderModal);
                 
+                // New Timer & Stopwatch Listeners
+                stopwatchBtn.addEventListener('click', openTimerStopwatch);
+                closeTimerStopwatchBtn.addEventListener('click', closeTimerStopwatch);
+                document.querySelector('.tab-nav').addEventListener('click', handleTabSwitch);
+                timerStartPauseBtn.addEventListener('click', startPauseTimer);
+                timerResetBtn.addEventListener('click', resetTimer);
+                timerPresetSelect.addEventListener('change', handlePresetChange);
+                managePresetsBtn.addEventListener('click', openPresetManager);
+                presetForm.addEventListener('submit', handlePresetFormSubmit);
+                presetCancelBtn.addEventListener('click', closePresetManager);
+                presetListContainer.addEventListener('click', (e) => {
+                    const button = e.target.closest('button');
+                    if (!button) return;
+                    const { action, id } = button.dataset;
+                    if (action === 'edit') {
+                        handlePresetEdit(id);
+                    } else if (action === 'delete') {
+                        if (confirm('Are you sure you want to delete this preset?')) {
+                            handlePresetDelete(id);
+                        }
+                    }
+                });
+
                 // Stopwatch Listeners
-                stopwatchBtn.addEventListener('click', openStopwatch);
-                stopwatchCloseBtn.addEventListener('click', closeStopwatch);
                 stopwatchStartBtn.addEventListener('click', startStopwatch);
                 stopwatchPauseBtn.addEventListener('click', pauseStopwatch);
                 stopwatchResetBtn.addEventListener('click', resetStopwatch);
@@ -1315,6 +1734,7 @@
                 backfillMissingDays();
                 loadTheme();
                 loadGlobalSize();
+                loadTimerPresets();
                 datePicker.value = getTodayISO();
                 updateHeaderDate();
                 updateUIForDate(datePicker.value);
