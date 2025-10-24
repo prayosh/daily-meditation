@@ -481,6 +481,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 1003; /* Ensure it's above other overlays */
         }
 
         .modal-content {
@@ -607,11 +608,25 @@
             padding-right: 2.5rem;
         }
         
-        .timer-controls, .stopwatch-controls, .stopwatch-actions {
+        .timer-controls, .stopwatch-actions {
             display: grid;
             width: 100%;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
+        }
+        
+        .stopwatch-controls {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .stopwatch-controls .btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            flex: 1;
+            max-width: 120px;
         }
 
         .stopwatch-actions-label {
@@ -650,7 +665,6 @@
             color: var(--theme-color);
         }
 
-        #preset-form input[type="text"],
         #preset-form input[type="number"] {
             padding: 0.5rem;
             background-color: var(--bg-color);
@@ -852,8 +866,8 @@
                 <div id="stopwatch-display" class="large-display">00:00:00</div>
                 <div class="stopwatch-controls">
                     <button class="btn" id="stopwatch-start">Start</button>
-                    <button class="btn btn-secondary" id="stopwatch-pause">Pause</button>
-                    <button class="btn btn-danger" id="stopwatch-reset">Reset</button>
+                    <button class="btn" id="stopwatch-pause">Pause</button>
+                    <button class="btn" id="stopwatch-reset">Reset</button>
                 </div>
                 <p class="stopwatch-actions-label">When done, add time to today's session:</p>
                 <div class="stopwatch-actions">
@@ -873,10 +887,6 @@
             </div>
             <form id="preset-form" style="display: flex; flex-direction: column; gap: 1rem;">
                 <input type="hidden" id="preset-id">
-                <div>
-                    <label for="preset-name" style="display: block; text-align: left; margin-bottom: 0.5rem;">Preset Name</label>
-                    <input type="text" id="preset-name" placeholder="e.g., Short Break" required style="width: 100%;">
-                </div>
                 <div style="display: flex; gap: 1rem;">
                     <div style="flex: 1;">
                         <label for="preset-minutes" style="display: block; text-align: left; margin-bottom: 0.5rem;">Minutes</label>
@@ -944,7 +954,7 @@
     <div id="toast"></div>
 
     <!-- Alarm Sound -->
-    <audio id="alarm-sound" src="data:audio/wav;base64,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AD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA-BwgAEAcIAA8HCAAOBwgADAcIAAoHCAAHBwgABgcIAAoHCgAMBwsADgcMAA8HDQAQBw4AEwcPABQHEgAXBxMAHAcVABwHGAAeBxsAIAcdACIHIAAjByMAJwcmACkHKgAsBywALgcwADEHMwA0BzkAOAoAADYKBAA5CgYAPQoIABAKCgAQAwsAEwMMABQDDgAWAxAAGQMSABwDFQAdAxYAHwMYACIDGgAkAxwAJgMeACgDJAApAyUA"></audio>
+    <audio id="alarm-sound" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RDT04AAAAGAAAAMikNVUkAAAAsAAAAY2h0dHA6Ly93d3cuZ3JzaXRlLmNvbS9zb3VuZC9tdXNpYy5odG0AAE9VUkMAAAAUAAAAaHR0cDovL3d3dy5ncnNpdGUuY29tAABUQUxCAAAAFgAAAGh0dHA6Ly93d3cuZ3JzaXRlLmNvbQAAVFNTRQAAAAgAAABMYXZmNTIuNQAAAP//uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//uQwgAYE////+uB7hT//g4P/w8//w8P/yP/xP/4P/v//lP/hP/lP/xP+P+P/v//78P/78P/w8P/w8P/v7//+//7//7//lP+P+P/7//7//v//v8P/78P/xP/xP/BP/7P//v//v//v/+P/xP/xP+P/7//7//v//7//v//v//7//v//v//v//v//v//v//v//v//v//v//7//v//v//v//v//v//v//v//v//v//v//v//uQwfZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU291bmQgRm9yZ2UgNC41AP/7kMQYGBL/wD/4D/8AD/4D/8D/wP/A/+D/4P/g/+D/gP+A/4D/wP/A/4D/wP/A/4D/wP/A/+D/gP+A/4D/wP/A/+D/4D/wP/A/8D/wP/A/4D/wP/A/8D/wP/A/8D/wP/A/4D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8-BwgAEAcIAA8HCAAOBwgADAcIAAoHCAAHBwgABgcIAAoHCgAMBwsADgcMAA8HDQAQBw4AEwcPABQHEgAXBxMAHAcVABwHGAAeBxsAIAcdACIHIAAjByMAJwcmACkHKwAsBywALgcwADEHMwA0BzkAOAoAADYKBAA5CgYAPQoIABAKCgAQAwsAEwMMABQDDgAWAxAAGQMSABwDFQAdAxYAHwMYACIDGgAkAxwAJgMeACgDJAApAyU="></audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1025,7 +1035,6 @@
             const presetListContainer = document.getElementById('preset-list-container');
             const presetForm = document.getElementById('preset-form');
             const presetIdInput = document.getElementById('preset-id');
-            const presetNameInput = document.getElementById('preset-name');
             const presetMinutesInput = document.getElementById('preset-minutes');
             const presetSecondsInput = document.getElementById('preset-seconds');
             const presetCancelBtn = document.getElementById('preset-cancel-btn');
@@ -1502,13 +1511,18 @@
             };
 
             const renderPresetDropdown = () => {
+                const currentId = timerPresetSelect.value;
                 timerPresetSelect.innerHTML = '';
                 timerPresets.forEach(preset => {
                     const option = document.createElement('option');
                     option.value = preset.id;
-                    option.textContent = `${preset.name} (${formatTimeForDisplay(preset.minutes * 60 + preset.seconds)})`;
+                    option.textContent = formatTimeForDisplay(preset.minutes * 60 + preset.seconds);
                     timerPresetSelect.appendChild(option);
                 });
+
+                if (timerPresets.some(p => p.id === currentId)) {
+                    timerPresetSelect.value = currentId;
+                }
                 handlePresetChange();
             };
 
@@ -1516,9 +1530,9 @@
                 const storedPresets = localStorage.getItem(TIMER_PRESETS_KEY);
                 if (!storedPresets) {
                     timerPresets = [
-                        { id: `preset_${Date.now()}_1`, name: 'Quick Break', minutes: 5, seconds: 0 },
-                        { id: `preset_${Date.now()}_2`, name: 'Standard Session', minutes: 15, seconds: 0 },
-                        { id: `preset_${Date.now()}_3`, name: 'Deep Focus', minutes: 30, seconds: 0 },
+                        { id: `preset_${Date.now()}_1`, minutes: 5, seconds: 0 },
+                        { id: `preset_${Date.now()}_2`, minutes: 15, seconds: 0 },
+                        { id: `preset_${Date.now()}_3`, minutes: 30, seconds: 0 },
                     ];
                     saveTimerPresets();
                 } else {
@@ -1548,7 +1562,6 @@
                 const preset = timerPresets.find(p => p.id === id);
                 if (preset) {
                     presetIdInput.value = preset.id;
-                    presetNameInput.value = preset.name;
                     presetMinutesInput.value = preset.minutes;
                     presetSecondsInput.value = preset.seconds;
                 }
@@ -1564,7 +1577,7 @@
                     const item = document.createElement('div');
                     item.className = 'preset-item';
                     item.innerHTML = `
-                        <span>${preset.name} (${formatTimeForDisplay(preset.minutes * 60 + preset.seconds)})</span>
+                        <span>${formatTimeForDisplay(preset.minutes * 60 + preset.seconds)}</span>
                         <div class="preset-item-actions">
                             <button aria-label="Edit preset" data-action="edit" data-id="${preset.id}">✏️</button>
                             <button aria-label="Delete preset" data-action="delete" data-id="${preset.id}">🗑️</button>
@@ -1577,22 +1590,26 @@
             const handlePresetFormSubmit = (e) => {
                 e.preventDefault();
                 const id = presetIdInput.value;
-                const name = presetNameInput.value.trim();
                 const minutes = parseInt(presetMinutesInput.value, 10);
                 const seconds = parseInt(presetSecondsInput.value, 10);
 
-                if (!name || isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || seconds > 59) {
-                    showToast('Invalid preset details.');
+                if (isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || seconds > 59 || (minutes === 0 && seconds === 0)) {
+                    showToast('Invalid preset time.');
                     return;
                 }
 
                 if (id) { // Editing existing
                     const index = timerPresets.findIndex(p => p.id === id);
                     if (index > -1) {
-                        timerPresets[index] = { id, name, minutes, seconds };
+                        timerPresets[index] = { id, minutes, seconds };
                     }
                 } else { // Adding new
-                    timerPresets.push({ id: `preset_${Date.now()}`, name, minutes, seconds });
+                    const exists = timerPresets.some(p => p.minutes === minutes && p.seconds === seconds);
+                    if (exists) {
+                        showToast('This preset duration already exists.');
+                        return;
+                    }
+                    timerPresets.push({ id: `preset_${Date.now()}`, minutes, seconds });
                 }
                 
                 saveTimerPresets();
